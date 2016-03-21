@@ -18,9 +18,6 @@ ENV VERSION 2.20
 ENV GIT_USER seanmwinn
 ENV GIT_EMAIL 'sean.pokermaster@gmail.com'
 
-ENV MAKEFILE /var/workspace/pkg/packages.make
-ENV TARGETS all
-
 ENV LIBUV_URL \
     http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv/v1.7.5
 
@@ -136,4 +133,6 @@ RUN repo sync
 #Satisfy additional third party dependencies
 RUN python third_party/fetch_packages.py
 
-ENTRYPOINT ["make", "-f", "${MAKEFILE}", "${TARGETS}"]
+ENTRYPOINT ["make", "-f", "/var/workspace/pkg/packages.make", "all"]
+
+
