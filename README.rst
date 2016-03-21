@@ -23,4 +23,4 @@ Then you can create debian packages by running the image using volume mounts for
 The default entrypoint of the project is ``make`` and the default command is
 ``-f $(makefile) $(targets)`` which will make the packages from the makefile using the specified targets.
 
-The default makefile is ``/var/workspack/packages.make`` and the default target is ``all``.
+The default makefile is ``/var/workspack/pkg/packages.make`` and the default target is ``all``.
