@@ -130,6 +130,5 @@ RUN repo sync
 #Satisfy additional third party dependencies
 RUN python third_party/fetch_packages.py
   
-ENTRYPOINT ["make", "-f /var/workspace/pkg/packages.make", "all"]
+ENTRYPOINT ["make", "-f", "/var/workspace/pkg/packages.make", "all"]
 
-#CMD $TARGETS
