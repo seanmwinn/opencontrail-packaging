@@ -21,10 +21,10 @@ ENV GIT_EMAIL 'sean.pokermaster@gmail.com'
 ENV MAKEFILE /var/workspace/pkg/packages.make
 ENV TARGETS all
 
-ENV LIBUV_URL = \
+ENV LIBUV_URL \
     http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv/v1.7.5
 
-ENV DATASTAX_URL = \
+ENV DATASTAX_URL \
     http://downloads.datastax.com/cpp-driver/ubuntu/14.04/v2.2.0
 
 # Add third party PPA to satisfy contrail dependencies
