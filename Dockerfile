@@ -133,4 +133,4 @@ RUN repo sync
 #Satisfy additional third party dependencies
 RUN python third_party/fetch_packages.py
 
-ENTRYPOINT "make"
+ENTRYPOINT ["make", "-f"]
