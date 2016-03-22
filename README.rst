@@ -1,5 +1,5 @@
 ============================
-Contrail Packaging
+OpenContrail Packaging
 ============================
 
 Creates debian packages which can be used to install Juniper's OpenContrail SDN networking solution.
