@@ -17,7 +17,7 @@ Then you can create debian packages by running the image using volume mounts for
 
 .. code-block:: console
 
-    $ docker run -v /lib/modules:/lib/modules -v /usr/src:/usr/src $(OUTPUT):$(PKG_OUT) contrail-packaging $(MAKEFILE) $(TARGET)
+    $ docker run -v /lib/modules:/lib/modules -v /usr/src:/usr/src -v $(OUTPUT):$(PKG_OUT) contrail-packaging $(MAKEFILE) $(TARGET)
 
 The default entrypoint of the project is ``make`` and the default command is
 ``-f $(MAKEFILE) $(TARGET)`` which will make the packages from the makefile using the specified targets.
