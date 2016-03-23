@@ -5,18 +5,10 @@ MAINTAINER EMC Cloud Services <autobots@emc.com>
 ENV WORKSPACE /var/workspace
 ENV USER root
 
-# Add the Google git-repo binaries to the search path
-ENV REPOBIN $WORKSPACE/git-repo
-ENV PATH $PATH:$REPOBIN
-
 # Setup contrail branch and repo
 ENV CONTRAIL_BRANCH R2.20
-ENV CONTRAIL_VNC_REPO git@github.com:Juniper/contrail-vnc
+ENV CONTRAIL_VNC_REPO https://github.com/Juniper/contrail-vnc.git
 ENV VERSION 2.20
-
-# Setup git user environment
-ENV GIT_USER seanmwinn
-ENV GIT_EMAIL 'sean.pokermaster@gmail.com'
 
 ENV LIBUV_URL \
     http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv/v1.7.5
@@ -104,28 +96,19 @@ RUN mkdir -p ${WORKSPACE}/pkg
 
 WORKDIR ${WORKSPACE}
 
-# Download google git-repo and mark the binary executable
-RUN git clone https://gerrit.googlesource.com/git-repo
 
-RUN chmod +x ${WORKSPACE}/git-repo/repo
+RUN wget -O /usr/bin/repo https://storage.googleapis.com/git-repo-downloads/repo\
+    && chmod 755 /usr/bin/repo
 
 RUN mkdir -p /root/.ssh
-ADD id_rsa /root/.ssh/id_rsa
-RUN chmod 700 /root/.ssh/id_rsa
 RUN echo "Host github.com\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
-
-RUN git config --global user.name ${GIT_USER}
-
-RUN git config --global user.email ${GIT_EMAIL}
-
-RUN git config --global color.ui auto
 
 # Initialize the contrail repos using Google's android repo tool
 WORKDIR ${WORKSPACE}/pkg
 
 RUN if [[ "${CONTRAIL_BRANCH}" == "default" ]]; \
-  then repo init -u ${CONTRAIL_VNC_REPO}; \
-  else repo init -u ${CONTRAIL_VNC_REPO} -b ${CONTRAIL_BRANCH}; \
+  then repo init -u ${CONTRAIL_VNC_REPO} -m noauth.xml; \
+  else repo init -u ${CONTRAIL_VNC_REPO} -b ${CONTRAIL_BRANCH} -m noauth.xml; \
   fi
 
 RUN repo sync
