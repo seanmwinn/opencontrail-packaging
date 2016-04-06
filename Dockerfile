@@ -2,15 +2,10 @@ FROM stackbrew/ubuntu:trusty
 MAINTAINER EMC Cloud Services <autobots@emc.com>
 
 ENV WORKSPACE=/var/workspace USER=root \
-  CONTRAIL_BRANCH=R2.20 CONTRAIL_VNC_REPO=git@github.com:Juniper/contrail-vnc\
+  CONTRAIL_BRANCH=master CONTRAIL_VNC_REPO=https://github.com/Juniper/contrail-vnc\
   LIBUV_URL="http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv/v1.7.5"\
   DATASTAX_URL="http://downloads.datastax.com/cpp-driver/ubuntu/14.04/v2.2.0"
 
-# Setup git user environment
-ENV GIT_USER=seanmwinn GIT_EMAIL=sean.pokermaster@gmail.com
-
-
-# Add third party PPA to satisfy contrail dependencies
 RUN apt-get update -y && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install \
   software-properties-common wget && \
@@ -89,25 +84,17 @@ WORKDIR ${WORKSPACE}
 
 # Download google git-repo and mark the binary executable
 RUN git clone https://gerrit.googlesource.com/git-repo \
-  && chmod +x ${WORKSPACE}/git-repo/repo \
-  && mkdir -p /root/.ssh \
-  && echo "Host github.com\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
-
-ADD id_rsa /root/.ssh/id_rsa
+  && chmod +x ${WORKSPACE}/git-repo/repo
 
 ENV REPOBIN ${WORKSPACE}/git-repo
 ENV PATH $PATH:$REPOBIN
-
-RUN git config --global user.name ${GIT_USER} \
-  && git config --global user.email ${GIT_EMAIL} \
-  && git config --global color.ui auto \
-  &&chmod 700 /root/.ssh/id_rsa
-
 
 # Initialize the contrail repos using Google's android repo tool
 WORKDIR ${WORKSPACE}/pkg
 
 RUN repo init -u ${CONTRAIL_VNC_REPO} -b ${CONTRAIL_BRANCH} \
+  && sed -i 's#<remote name="github"   fetch=".."/>#<remote name="github" \
+  fetch="https://github.com/Juniper"/>g' .repo/manifest.xml
   && repo sync \
   && python third_party/fetch_packages.py
 

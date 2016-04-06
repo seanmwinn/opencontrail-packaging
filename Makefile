@@ -5,8 +5,8 @@ PKG_OUT := /var/workspace/pkg/build/packages
 
 DOCKER_IMAGE ?= contrail-packaging
 
-TARGET ?= all
-MAKEFILE ?= /var/workspace/pkg/packages.make
+MAKE_TARGET ?= all
+MAKE_ARGS ?= /var/workspace/pkg/packages.make
 
 
 docker-all: docker-clean docker-run
@@ -27,6 +27,6 @@ docker-clean:
 docker-run: docker-build
 	@echo "--> Run the build image container"
 	docker run --rm -v $(OUTPUT):$(PKG_OUT) -v /lib/modules:/lib/modules -v \
-	/usr/src:/usr/src -t $(DOCKER_IMAGE) $(MAKEFILE) $(TARGET)
+	/usr/src:/usr/src -t $(DOCKER_IMAGE) $(MAKE_ARGS) $(MAKE_TARGET)
 
 .PHONY: docker-all docker-build docker-clean docker-run
