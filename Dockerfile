@@ -2,7 +2,7 @@ FROM stackbrew/ubuntu:trusty
 MAINTAINER EMC Cloud Services <autobots@emc.com>
 
 ENV WORKSPACE=/var/workspace USER=root \
-  CONTRAIL_BRANCH=master CONTRAIL_VNC_REPO=https://github.com/Juniper/contrail-vnc\
+  CONTRAIL_BRANCH=R3.0 CONTRAIL_VNC_REPO=https://github.com/Juniper/contrail-vnc\
   LIBUV_URL="http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv/v1.7.5"\
   DATASTAX_URL="http://downloads.datastax.com/cpp-driver/ubuntu/14.04/v2.2.0"
 
@@ -93,8 +93,8 @@ ENV PATH $PATH:$REPOBIN
 WORKDIR ${WORKSPACE}/pkg
 
 RUN repo init -u ${CONTRAIL_VNC_REPO} -b ${CONTRAIL_BRANCH} \
-  && sed -i 's#<remote name="github"   fetch=".."/>#<remote name="github" \
-  fetch="https://github.com/Juniper"/>g' .repo/manifest.xml
+  && sed -i 's#<remote name="github" fetch=".."/>#<remote name="github" \
+  fetch="https://github.com/Juniper"/>#g' .repo/manifest.xml\
   && repo sync \
   && python third_party/fetch_packages.py
 
