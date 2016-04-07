@@ -8,13 +8,16 @@ DOCKER_IMAGE ?= contrail-packaging
 MAKE_TARGET ?= all
 MAKE_ARGS ?= /var/workspace/pkg/packages.make
 
+clean:
+	@echo "--> Removing build artifacts"
+	rm -rf $(WORKDIR)/output
 
-docker-all: docker-clean docker-run
+
+docker-all: docker-clean docker-build
 
 
 docker-build:
 	@echo "--> Building docker build image"
-	#Do some stuff to add a github ssh key and host key
 	docker build -t $(DOCKER_IMAGE) -f "$(WORKDIR)/Dockerfile" $(WORKDIR)
 
 
@@ -23,10 +26,11 @@ docker-clean:
 	docker rmi $(DOCKER_IMAGE) || true
 
 
-
-docker-run: docker-build
+docker-run: clean
 	@echo "--> Run the build image container"
+	mkdir -p $(WORKDIR)/output
 	docker run --rm -v $(OUTPUT):$(PKG_OUT) -v /lib/modules:/lib/modules -v \
 	/usr/src:/usr/src -t $(DOCKER_IMAGE) $(MAKE_ARGS) $(MAKE_TARGET)
 
-.PHONY: docker-all docker-build docker-clean docker-run
+
+.PHONY: clean docker-all docker-build docker-clean docker-run
