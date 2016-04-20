@@ -1,7 +1,7 @@
 FROM stackbrew/ubuntu:trusty
 MAINTAINER EMC Cloud Services <autobots@emc.com>
 
-ENV WORKSPACE=/var/workspace USER=root \
+ENV WORKSPACE=/var/workspace USER=nobody \
   CONTRAIL_BRANCH=master CONTRAIL_VNC_REPO=https://github.com/Juniper/contrail-vnc\
   LIBUV_URL="http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv/v1.7.5"\
   DATASTAX_URL="http://downloads.datastax.com/cpp-driver/ubuntu/14.04/v2.2.0"
@@ -9,7 +9,9 @@ ENV WORKSPACE=/var/workspace USER=root \
 RUN apt-get update -y && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install \
   software-properties-common wget && \
-  add-apt-repository ppa:tcpcloud/extra
+  add-apt-repository 'deb [arch=amd64] http://10.131.236.229/testing contrail-testing-extra main' && \
+  wget -O /tmp/rcs-repo-pubkey.asc http://10.131.236.229/key/rcs-repo-pubkey.asc && \
+  apt-key add /tmp/rcs-repo-pubkey.asc
 
 RUN wget ${LIBUV_URL}/libuv_1.7.5-1_amd64.deb \
   && dpkg -i libuv_1.7.5-1_amd64.deb \
@@ -93,9 +95,15 @@ ENV PATH $PATH:$REPOBIN
 WORKDIR ${WORKSPACE}/pkg
 
 RUN repo init -u ${CONTRAIL_VNC_REPO} -b ${CONTRAIL_BRANCH} \
-  && sed -i 's#<remote name="github"   fetch=".."/>#<remote name="github" \
-  fetch="https://github.com/Juniper"/>g' .repo/manifest.xml
-  && repo sync \
+  && sed -i 's#<remote name="github" fetch=".."/>#<remote name="github" \
+  fetch="https://github.com/Juniper"/>#g' .repo/manifest.xml
+
+# TODO: Remove when fixed upstream
+# Fix ceilometer plugin
+RUN mkdir .repo/local_manifests 
+ADD ceilometer.xml ${WORKSPACE}/pkg/.repo/local_manifests/ceilometer.xml
+
+RUN repo sync \
   && python third_party/fetch_packages.py
 
 ENTRYPOINT ["make", "-f"]
