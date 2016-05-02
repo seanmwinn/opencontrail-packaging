@@ -4,12 +4,6 @@ OUTPUT ?= $(WORKDIR)/output
 BUILD_DIR ?= /var/workspace/pkg/build
 PKG_OUT ?= $(BUILD_DIR)/packages
 
-API_DST ?= $(OUTPUT)/api-lib
-API_SRC ?= $(BUILD_DIR)/production/api-lib
-
-COMMON_DST ?= $(OUTPUT)/common
-COMMON_SRC ?= $(BUILD_DIR)/production/config/common
-
 DOCKER_IMAGE ?= contrail-packaging
 DOCKER_TAG ?= master
 CONTAINER_NAME ?= $(DOCKER_IMAGE)
@@ -39,12 +33,9 @@ docker-clean:
 docker-run:
 	@echo "--> Run the build image container"
 	mkdir -p $(OUTPUT)
-	mkdir -p $(API_DST)
-	mkdir -p $(COMMON_DST)
-	docker run --name $(CONTAINER_NAME) --rm -v $(API_DST):$(API_SRC) \
-	-v $(OUTPUT):$(PKG_OUT) -v /lib/modules:/lib/modules -v \
-	$(COMMON_DST):$(COMMON_SRC) -v /usr/src:/usr/src \
-	$(DOCKER_IMAGE):$(DOCKER_TAG) $(MAKE_ARGS) $(MAKE_TARGET)
+	docker run --name $(CONTAINER_NAME) --rm -v $(OUTPUT):$(PKG_OUT) \
+        -v /lib/modules:/lib/modules -v /usr/src:/usr/src \
+        $(DOCKER_IMAGE):$(DOCKER_TAG) $(MAKE_ARGS) $(MAKE_TARGET)
 
 
 .PHONY: clean docker-all docker-build docker-clean docker-run
