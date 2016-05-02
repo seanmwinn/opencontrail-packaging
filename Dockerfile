@@ -9,9 +9,7 @@ ENV WORKSPACE=/var/workspace USER=nobody \
 RUN apt-get update -y && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install \
   software-properties-common wget && \
-  add-apt-repository 'deb [arch=amd64] http://10.131.236.229/testing contrail-testing-extra main' && \
-  wget -O /tmp/rcs-repo-pubkey.asc http://10.131.236.229/key/rcs-repo-pubkey.asc && \
-  apt-key add /tmp/rcs-repo-pubkey.asc
+  apt-add-repository ppa:tcpcloud/extra
 
 RUN wget ${LIBUV_URL}/libuv_1.7.5-1_amd64.deb \
   && dpkg -i libuv_1.7.5-1_amd64.deb \
